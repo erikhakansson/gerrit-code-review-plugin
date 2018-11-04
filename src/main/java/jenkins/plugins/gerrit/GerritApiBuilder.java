@@ -9,15 +9,16 @@ import com.urswolfer.gerrit.client.rest.http.HttpClientBuilderExtension;
 import hudson.EnvVars;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import jenkins.plugins.gerrit.api.ssh.GerritSSHApi;
+import org.apache.sshd.client.SshClient;
+import org.eclipse.jgit.transport.URIish;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import jenkins.plugins.gerrit.api.ssh.GerritApiSSH;
-import org.apache.sshd.client.SshClient;
-import org.eclipse.jgit.transport.URIish;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
 
 /** A wrapper on top of GerritApi. Enables common functionality. */
 public class GerritApiBuilder {
@@ -117,7 +118,8 @@ public class GerritApiBuilder {
           .create(authData, extensions.toArray(new HttpClientBuilderExtension[0]));
     } else {
       // todo: handle credentials, including SSHCredentialsPlugin
-      return new GerritApiSSH(SshClient.setUpDefaultClient(), gerritApiUrl, SSH_TIMEOUT_MS);
+      return new GerritSSHApi(
+          SshClient.setUpDefaultClient(), gerritApiUrl, authData, SSH_TIMEOUT_MS);
     }
   }
 
